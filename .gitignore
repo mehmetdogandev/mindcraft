@@ -1,0 +1,29 @@
+# Secrets
+.env
+.env.local
+.env.*.local
+
+# Dependencies / build (future app code)
+node_modules/
+.expo/
+dist/
+build/
+coverage/
+.turbo/
+.cache/
+*.tsbuildinfo
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+
+# iOS / Android artifacts (future)
+ios/Pods/
+*.ipa
+*.apk
+*.aab
+*.jks
+*.p8
+*.p12
+*.mobileprovision
