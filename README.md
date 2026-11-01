@@ -2,13 +2,44 @@
 
 Öğrencinin gerçek akademik takvimine uyum sağlayan, her ders için kendi yarattığı animasyonlu yapay zekâ öğretmenlerini barındıran, Gemini destekli günlük oyun maceraları üreten **mobil-only** öğrenme oyunu.
 
-Bu klasör şu an **plan deposudur**. Oyun kodu, Expo init ve API henüz yok. Uygulama, aşağıdaki dokümanlar onaylandıktan sonra faz faz yazılır.
+Plan dosyaları `docs/` altındadır. Uygulama iskeleti P00–P07 boyunca kuruluyor: Expo mobil + Hono API + paylaşılan paketler.
 
 Kaynaklar:
 
 - PDF: `../mindcraft-—-kendi-öğrenme-evrenini-i̇nşa-et/MINDCRAFT_Kapsamli_Proje_Dokumani.pdf`
 - Evren prototipi: `../mindcraft-—-kendi-öğrenme-evrenini-i̇nşa-et`
 - Mevcut LMS / Living Mentors: `../mindcraft`
+
+## Çalıştırma
+
+```bash
+cp .env.example .env          # GEMINI_API_KEY'i sen ekle
+pnpm install
+pnpm stack:up
+pnpm db:push
+pnpm test
+pnpm dev                      # API :4000 + Expo
+```
+
+iOS (Xcode):
+
+```bash
+pnpm --filter @mindcraft/mobile ios:open
+```
+
+Workspace: `apps/mobile/ios/Mindcraft.xcworkspace` (`.xcodeproj` değil). Xcode’da Signing Team seç, bir simülatör veya cihaz seç, Run.
+
+API’siz uygulama gate’de kalır. API için:
+
+```bash
+pnpm stack:up
+pnpm db:push
+pnpm --filter @mindcraft/server start
+```
+
+MinIO Docker Hub’da login istediği için varsayılan stack’te yok; karakter dosyaları şimdilik bellekten servis edilir. İstersen: `docker compose -f docker-compose.dev.yml --profile minio up -d`
+
+TestFlight: `apps/mobile/eas.json` preview profili. Push ajan işi değildir.
 
 ## Ürün sınırı
 

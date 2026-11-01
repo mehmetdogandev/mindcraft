@@ -1,0 +1,45 @@
+{
+  "expo": {
+    "name": "Mindcraft",
+    "slug": "mindcraft-v2",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "mindcraftv2",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0D0421"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.aksiyonsoft.mindcraft.v2",
+      "icon": "./assets/icon.png",
+      "splash": {
+        "image": "./assets/splash-icon.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#0D0421"
+      },
+      "infoPlist": {
+        "CFBundleDisplayName": "Mindcraft",
+        "NSAppTransportSecurity": {
+          "NSAllowsLocalNetworking": true,
+          "NSAllowsArbitraryLoads": true
+        }
+      }
+    },
+    "android": {
+      "package": "com.aksiyonsoft.mindcraft.v2",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0D0421"
+      }
+    },
+    "plugins": [],
+    "extra": {
+      "apiBaseUrl": "http://localhost:4000"
+    }
+  }
+}

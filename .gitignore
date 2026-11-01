@@ -27,3 +27,15 @@ ios/Pods/
 *.p8
 *.p12
 *.mobileprovision
+
+# Expo / native
+**/ios/Pods/
+**/ios/build/
+**/ios/DerivedData/
+android/.gradle/
+android/app/build/
+*.orig.*
+web-build/
+
+# Drizzle
+drizzle/meta/_journal.json.bak

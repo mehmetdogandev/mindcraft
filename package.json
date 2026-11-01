@@ -1,0 +1,23 @@
+{
+  "name": "mindcraft-v2",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "pnpm@10.33.2",
+  "engines": {
+    "node": ">=22.11.0"
+  },
+  "scripts": {
+    "dev": "pnpm run stack:up && concurrently -k -n server,mobile -c blue,magenta \"pnpm dev:server\" \"pnpm dev:mobile\"",
+    "dev:server": "pnpm --filter @mindcraft/server dev",
+    "dev:mobile": "pnpm --filter @mindcraft/mobile start",
+    "stack:up": "docker compose -f docker-compose.dev.yml up -d",
+    "stack:down": "docker compose -f docker-compose.dev.yml down",
+    "db:push": "pnpm --filter @mindcraft/server db:push",
+    "test": "pnpm --filter @mindcraft/game-rules test && pnpm --filter @mindcraft/schedule test",
+    "typecheck": "pnpm -r --if-present typecheck"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.0",
+    "typescript": "^5.9.3"
+  }
+}
