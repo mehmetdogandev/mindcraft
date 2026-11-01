@@ -1,10 +1,13 @@
 import { useState } from 'react'
-import { Alert, ScrollView, StyleSheet } from 'react-native'
+import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { CourseDraftForm } from '../components/CourseDraftForm.tsx'
+import { BrandMark } from '../components/BrandMark.tsx'
+import { Body, Button, Card, Field, Title } from '../components/ui.tsx'
+import { defaultOnboardingCourses, newCourseDraft, type CourseDraft } from '../lib/courses/draft.ts'
+import { saveCourseWithTeacher } from '../lib/courses/save.ts'
 import { trpc } from '../lib/api/trpc.ts'
 import { colors } from '../lib/theme.ts'
-import { BrandMark } from '../components/BrandMark.tsx'
-import { Body, Button, Field, Title } from '../components/ui.tsx'
 
 const roles = ['student', 'graduate', 'worker', 'independent'] as const
 
@@ -17,15 +20,24 @@ export function OnboardingScreen({ onDone }: { onDone: () => void }) {
   const [termName, setTermName] = useState('2026 Güz')
   const [startDate, setStartDate] = useState('2026-09-15')
   const [endDate, setEndDate] = useState('2027-01-15')
-  const [courseName, setCourseName] = useState('Veri Yapıları')
-  const [prompt, setPrompt] = useState('Mor pelerinli, esprili, sabırlı bir ejderha')
+  const [courses, setCourses] = useState<CourseDraft[]>(defaultOnboardingCourses)
   const [busy, setBusy] = useState(false)
 
+  const readyCourses = courses.filter((c) => c.name.trim() && c.teacherPrompt.trim())
+
+  function updateCourse(key: string, next: CourseDraft) {
+    setCourses((prev) => prev.map((item) => (item.key === key ? next : item)))
+  }
+
   async function finish() {
+    if (readyCourses.length === 0) {
+      Alert.alert('Dersler', 'En az bir ders ve o dersin öğretmen tarifini yaz.')
+      return
+    }
     setBusy(true)
     try {
       await trpc().onboarding.commit.mutate({
-        confirmations: [`Rol: ${role}`, `Ad: ${displayName}`],
+        confirmations: [`Rol: ${role}`, `Ad: ${displayName}`, `Ders: ${readyCourses.length}`],
         learnerRole: role,
         displayName: displayName || 'Kâşif',
         timezone: 'Europe/Istanbul',
@@ -38,27 +50,9 @@ export function OnboardingScreen({ onDone }: { onDone: () => void }) {
         endDate,
         activate: true,
       })
-      const created = await trpc().calendar.courses.upsert.mutate({
-        termId: term.id,
-        name: courseName,
-        realmId: 'code',
-        source: 'academic',
-        progressStatus: 'current',
-      })
-      await trpc().calendar.meetings.replace.mutate({
-        courseId: created.id,
-        slots: [
-          { weekday: 1, startTime: '09:00', endTime: '11:00', label: courseName },
-          { weekday: 1, startTime: '13:00', endTime: '15:00', label: 'Ayrık Matematik' },
-        ],
-      })
-      await trpc().characters.create.mutate({
-        kind: 'mentor',
-        courseId: created.id,
-        method: 'describe',
-        prompt,
-        skeletonHint: 'creature',
-      })
+      for (const [index, draft] of readyCourses.entries()) {
+        await saveCourseWithTeacher(draft, term.id, index)
+      }
       onDone()
     } catch (error) {
       Alert.alert('Kurulum', error instanceof Error ? error.message : 'AI veya sunucu kapalı olabilir')
@@ -77,14 +71,14 @@ export function OnboardingScreen({ onDone }: { onDone: () => void }) {
             <Body>Anket değil, kısa bir kimlik. Gemini yoksa bu form yedektir.</Body>
             <Field placeholder="Adın" value={displayName} onChangeText={setDisplayName} />
             {roles.map((item) => (
-              <Button key={item} label={item} onPress={() => setRole(item)} />
+              <Button key={item} label={item} ghost={role !== item} onPress={() => setRole(item)} />
             ))}
             <Button label="Devam" onPress={() => setStep(1)} />
           </>
         ) : null}
         {step === 1 ? (
           <>
-            <Body>Dönem ve ilk ders. Pazartesi senaryosu için iki saatlik iki oturum eklenir.</Body>
+            <Body>Dönemi yaz. Dersleri bir sonraki adımda tek tek ekleyeceksin.</Body>
             {role === 'student' ? (
               <>
                 <Field placeholder="Okul" value={schoolName} onChangeText={setSchoolName} />
@@ -94,15 +88,34 @@ export function OnboardingScreen({ onDone }: { onDone: () => void }) {
             <Field placeholder="Dönem adı" value={termName} onChangeText={setTermName} />
             <Field placeholder="Başlangıç YYYY-MM-DD" value={startDate} onChangeText={setStartDate} />
             <Field placeholder="Bitiş YYYY-MM-DD" value={endDate} onChangeText={setEndDate} />
-            <Field placeholder="İlk ders" value={courseName} onChangeText={setCourseName} />
-            <Button label="Devam" onPress={() => setStep(2)} />
+            <Button label="Derslere geç" onPress={() => setStep(2)} />
           </>
         ) : null}
         {step === 2 ? (
           <>
-            <Body>İlk öğretmenini tarif et. Hazır olmadan evrene alınmazsın.</Body>
-            <Field placeholder="Öğretmen tarifi" value={prompt} onChangeText={setPrompt} multiline />
-            <Button disabled={busy} label={busy ? 'Üretiliyor…' : 'Öğretmeni yarat ve başla'} onPress={finish} />
+            <Body>
+              Bir döneme istediğin kadar ders. Her dersin kendi hocası var; tarifler karışmaz.
+            </Body>
+            {courses.map((course, index) => (
+              <Card key={course.key}>
+                <Text style={styles.cardKicker}>Ders {index + 1}</Text>
+                <CourseDraftForm value={course} onChange={(next) => updateCourse(course.key, next)} />
+                {courses.length > 1 ? (
+                  <Button
+                    ghost
+                    label="Bu dersi çıkar"
+                    onPress={() => setCourses((prev) => prev.filter((item) => item.key !== course.key))}
+                  />
+                ) : null}
+              </Card>
+            ))}
+            <Button ghost label="Başka ders ekle" onPress={() => setCourses((prev) => [...prev, newCourseDraft()])} />
+            <Button
+              disabled={busy || readyCourses.length === 0}
+              label={busy ? 'Öğretmenler üretiliyor…' : `${readyCourses.length} ders ve hoca ile başla`}
+              onPress={finish}
+            />
+            <Button ghost label="Döneme dön" onPress={() => setStep(1)} />
           </>
         ) : null}
       </ScrollView>
@@ -112,5 +125,6 @@ export function OnboardingScreen({ onDone }: { onDone: () => void }) {
 
 const styles = StyleSheet.create({
   box: { flex: 1, backgroundColor: colors.bg },
-  scroll: { padding: 22, gap: 12 },
+  scroll: { padding: 22, gap: 12, paddingBottom: 40 },
+  cardKicker: { color: colors.accent, fontWeight: '800', textTransform: 'uppercase', fontSize: 12 },
 })

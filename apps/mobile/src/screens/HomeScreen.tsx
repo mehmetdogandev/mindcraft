@@ -18,22 +18,29 @@ type HomeData = {
 export function HomeScreen({
   geminiOn,
   onOpenMentor,
+  onAddCourse,
+  onCreateTeacher,
   onOpenSkills,
   onOpenQuest,
 }: {
   geminiOn: boolean
   onOpenMentor: (characterId: string, courseId?: string) => void
+  onAddCourse: (termId?: string) => void
+  onCreateTeacher: (courseId: string) => void
   onOpenSkills: () => void
   onOpenQuest: (courseId?: string, topic?: string) => void
 }) {
   const [data, setData] = useState<HomeData | null>(null)
   const [refreshing, setRefreshing] = useState(false)
+  const [termId, setTermId] = useState<string | undefined>()
 
   const load = useCallback(async () => {
     const profile = await trpc().profile.get.query()
+    const terms = await trpc().calendar.terms.list.query()
     const courses = await trpc().calendar.courses.list.query()
     const characters = await trpc().characters.list.query()
     const today = await trpc().plan.today.query()
+    setTermId(terms.find((item) => item.isActive)?.id ?? terms[0]?.id)
     const level = calculateLevel(profile.progress.xp)
     setData({
       progress: { xp: profile.progress.xp, title: level.title, level: level.level },
@@ -101,17 +108,23 @@ export function HomeScreen({
               key={course.id}
               onPress={() => {
                 if (mentor) onOpenMentor(mentor.id, course.id)
+                else onCreateTeacher(course.id)
               }}
             >
               <Card>
-                <View style={[styles.dot, { backgroundColor: course.color }]} />
-                <Text style={styles.cardTitle}>{course.name}</Text>
-                <Text style={styles.muted}>{mentor?.profile.name ?? 'Öğretmen bekleniyor'}</Text>
+                <View style={styles.courseHead}>
+                  <View style={[styles.dot, { backgroundColor: course.color }]} />
+                  <Text style={styles.cardTitle}>{course.name}</Text>
+                </View>
+                <Text style={styles.muted}>
+                  {mentor?.profile.name ?? 'Öğretmen yok — dokun, bu derse hoca yarat'}
+                </Text>
               </Card>
             </Pressable>
           )
         })}
-        <Button label="Beceri haritası" onPress={onOpenSkills} />
+        <Button label="Döneme ders ekle" onPress={() => onAddCourse(termId)} />
+        <Button ghost label="Beceri haritası" onPress={onOpenSkills} />
       </ScrollView>
     </SafeAreaView>
   )
@@ -126,5 +139,6 @@ const styles = StyleSheet.create({
   cardTitle: { color: colors.text, fontSize: 18, fontWeight: '700' },
   muted: { color: colors.muted },
   section: { color: colors.text, fontSize: 18, fontWeight: '700', marginTop: 8 },
+  courseHead: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   dot: { width: 12, height: 12, borderRadius: 6 },
 })

@@ -10,22 +10,28 @@ export function Body({ children }: { children: string }) {
   return <Text style={styles.body}>{children}</Text>
 }
 
-export function Field(props: TextInputProps) {
-  return <TextInput placeholderTextColor={colors.muted} style={styles.input} {...props} />
+export function Field({ style, ...props }: TextInputProps) {
+  return <TextInput placeholderTextColor={colors.muted} style={[styles.input, style]} {...props} />
 }
 
 export function Button({
   label,
   onPress,
   disabled,
+  ghost,
 }: {
   label: string
   onPress: () => void
   disabled?: boolean
+  ghost?: boolean
 }) {
   return (
-    <Pressable disabled={disabled} onPress={onPress} style={[styles.btn, disabled && { opacity: 0.5 }]}>
-      <Text style={styles.btnText}>{label}</Text>
+    <Pressable
+      disabled={disabled}
+      onPress={onPress}
+      style={[styles.btn, ghost && styles.btnGhost, disabled && { opacity: 0.5 }]}
+    >
+      <Text style={[styles.btnText, ghost && styles.btnGhostText]}>{label}</Text>
     </Pressable>
   )
 }
@@ -54,7 +60,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 16,
   },
+  btnGhost: { backgroundColor: 'transparent', borderWidth: 1, borderColor: colors.border },
   btnText: { color: colors.accentText, fontWeight: '700', fontSize: 16 },
+  btnGhostText: { color: colors.text },
   card: {
     backgroundColor: colors.card,
     borderColor: colors.border,

@@ -7,7 +7,7 @@
     "node": ">=22.11.0"
   },
   "scripts": {
-    "dev": "pnpm run stack:up && concurrently -k -n server,mobile -c blue,magenta \"pnpm dev:server\" \"pnpm dev:mobile\"",
+    "dev": "pnpm run stack:up && pnpm db:push && pnpm dev:server",
     "dev:server": "pnpm --filter @mindcraft/server dev",
     "dev:mobile": "pnpm --filter @mindcraft/mobile start",
     "stack:up": "docker compose -f docker-compose.dev.yml up -d",

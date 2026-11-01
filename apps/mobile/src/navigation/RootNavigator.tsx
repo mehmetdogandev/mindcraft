@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { AuthHostScreen } from '../screens/AuthHostScreen.tsx'
 import { OnboardingScreen } from '../screens/OnboardingScreen.tsx'
 import { HomeScreen } from '../screens/HomeScreen.tsx'
+import { CourseSetupScreen } from '../screens/CourseSetupScreen.tsx'
 import { MentorRoomScreen } from '../screens/MentorRoomScreen.tsx'
 import { QuestScreen } from '../screens/QuestScreen.tsx'
 import { SkillMapScreen } from '../screens/SkillMapScreen.tsx'
@@ -62,8 +63,19 @@ export function RootNavigator({
                   onOpenMentor={(characterId, courseId) =>
                     navigation.navigate('Mentor', { characterId, courseId })
                   }
+                  onAddCourse={(termId) => navigation.navigate('CourseSetup', { termId })}
+                  onCreateTeacher={(courseId) => navigation.navigate('CourseSetup', { courseId })}
                   onOpenSkills={() => navigation.navigate('Skills')}
                   onOpenQuest={(courseId, topic) => navigation.navigate('Quest', { courseId, topic })}
+                />
+              )}
+            </Stack.Screen>
+            <Stack.Screen name="CourseSetup" options={{ title: 'Ders' }}>
+              {({ route, navigation }) => (
+                <CourseSetupScreen
+                  courseId={route.params.courseId}
+                  termId={route.params.termId}
+                  onDone={() => navigation.navigate('Home')}
                 />
               )}
             </Stack.Screen>
