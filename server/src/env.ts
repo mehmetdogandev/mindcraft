@@ -17,7 +17,7 @@ export const env = {
   s3AccessKey: read('S3_ACCESS_KEY', 'minioadmin'),
   s3SecretKey: read('S3_SECRET_KEY', 'minioadmin'),
   geminiApiKey: read('GEMINI_API_KEY'),
-  geminiModel: read('GEMINI_MODEL', 'gemini-2.0-flash'),
+  geminiModel: read('GEMINI_MODEL', 'gemini-3.8-flash'),
   betterAuthSecret: read('BETTER_AUTH_SECRET', 'dev-only-change-me'),
   betterAuthUrl: read('BETTER_AUTH_URL', 'http://localhost:4000'),
   apiPublicUrl: read('API_PUBLIC_URL', 'http://localhost:4000'),
