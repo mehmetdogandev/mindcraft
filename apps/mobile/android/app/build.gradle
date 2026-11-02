@@ -14,7 +14,7 @@ react {
     autolinkLibrariesWithApp()
 }
 
-def enableMinifyInReleaseBuilds = false
+def enableMinifyInReleaseBuilds = true
 def jscFlavor = 'io.github.react-native-community:jsc-android:2026004.+'
 
 android {
@@ -27,10 +27,20 @@ android {
         applicationId 'com.mindcraft.nextpeak'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
+        versionCode 2
         versionName "1.0"
 
         buildConfigField "String", "REACT_NATIVE_RELEASE_LEVEL", "\"${findProperty('reactNativeReleaseLevel') ?: 'stable'}\""
+        externalNativeBuild {
+            cmake {
+                arguments "-DCMAKE_OBJECT_PATH_MAX=260"
+            }
+        }
+    }
+    externalNativeBuild {
+        cmake {
+            buildStagingDirectory file("C:/Users/mrasa/.cxx/mc")
+        }
     }
     signingConfigs {
         debug {
@@ -55,7 +65,11 @@ android {
         release {
             signingConfig signingConfigs.release
             minifyEnabled enableMinifyInReleaseBuilds
+            shrinkResources enableMinifyInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            ndk {
+                debugSymbolLevel 'SYMBOL_TABLE'
+            }
         }
     }
 }

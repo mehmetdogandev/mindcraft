@@ -7,8 +7,18 @@
 # For more details, see
 #   http://developer.android.com/guide/developing/tools/proguard.html
 
-# react-native-reanimated
+# react-native-reanimated & New Architecture / Hermes keep rules
 -keep class com.swmansion.reanimated.** { *; }
 -keep class com.facebook.react.turbomodule.** { *; }
-
-# Add any project specific keep options here:
+-keep class com.facebook.jni.** { *; }
+-keep class com.facebook.react.** { *; }
+-keep class com.facebook.hermes.** { *; }
+-keep class com.swmansion.rnscreens.** { *; }
+-keep class com.horcrux.svg.** { *; }
+-keep class com.th3rdwave.safeareacontext.** { *; }
+-keep class com.reactnativecommunity.asyncstorage.** { *; }
+-keep class com.mindcraft.nextpeak.** { *; }
+-dontwarn com.facebook.react.**
+-dontwarn javax.annotation.**
+-dontwarn okhttp3.**
+-dontwarn okio.**
