@@ -1,7 +1,7 @@
 {
   "name": "mindcraft-v2",
   "private": true,
-  "version": "0.1.0",
+  "version": "1.0.0",
   "packageManager": "pnpm@10.33.2",
   "engines": {
     "node": ">=22.11.0"
@@ -9,6 +9,7 @@
   "scripts": {
     "emulator": "node ./apps/mobile/scripts/android.mjs emulator",
     "android:emulator": "node ./apps/mobile/scripts/android.mjs build",
+    "android:aab": "node ./apps/mobile/scripts/android.mjs bundle",
     "start": "node ./apps/mobile/scripts/android.mjs start",
     "dev": "node ./apps/mobile/scripts/android.mjs start",
     "test": "pnpm --filter @mindcraft/game-rules test && pnpm --filter @mindcraft/schedule test && pnpm --filter @mindcraft/sprites test",

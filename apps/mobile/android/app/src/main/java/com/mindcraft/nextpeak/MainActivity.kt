@@ -1,4 +1,4 @@
-package com.aksiyonsoft.mindcraft.v2
+package com.mindcraft.nextpeak
 
 import android.os.Bundle
 import com.facebook.react.ReactActivity

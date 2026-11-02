@@ -10,7 +10,7 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const mobileRoot = path.resolve(__dirname, '..')
 const isWin = process.platform === 'win32'
-const APP_ID = 'com.aksiyonsoft.mindcraft.v2'
+const APP_ID = 'com.mindcraft.nextpeak'
 const MAIN_ACTIVITY = `${APP_ID}/.MainActivity`
 
 function resolveAndroidSdkRoot() {
@@ -318,7 +318,34 @@ async function main() {
     return
   }
 
-  throw new Error(`Bilinmeyen mod: ${mode}. Kullanım: node scripts/android.mjs <emulator|build|start>`)
+  if (mode === 'bundle') {
+    ensureLocalProperties()
+    console.log('[android] Google Play Release AAB (API 36 / com.mindcraft.nextpeak v1.0) üretiliyor...')
+    const gradlew = isWin ? 'gradlew.bat' : './gradlew'
+    const res = spawnSync(gradlew, ['bundleRelease'], {
+      cwd: path.join(mobileRoot, 'android'),
+      stdio: 'inherit',
+      shell: isWin,
+      env,
+    })
+    if (res.status !== 0) {
+      throw new Error(`gradlew bundleRelease komutu ${res.status} koduyla sonlandı.`)
+    }
+    const aabPath = path.join(
+      mobileRoot,
+      'android',
+      'app',
+      'build',
+      'outputs',
+      'bundle',
+      'release',
+      'app-release.aab'
+    )
+    console.log(`[android] AAB başarıyla oluşturuldu: ${aabPath}`)
+    return
+  }
+
+  throw new Error(`Bilinmeyen mod: ${mode}. Kullanım: node scripts/android.mjs <emulator|build|bundle|start>`)
 }
 
 main().catch((err) => {
