@@ -17,27 +17,36 @@ export async function saveCourseWithTeacher(
     progressStatus: 'current',
   })
 
-  if (draft.startTime && draft.endTime) {
+  const rawSlots =
+    draft.slots && draft.slots.length > 0
+      ? draft.slots
+      : draft.startTime && draft.endTime
+        ? [{ weekday: draft.weekday, startTime: draft.startTime, endTime: draft.endTime }]
+        : []
+
+  const validSlots = rawSlots.filter((s) => s.startTime.trim() && s.endTime.trim())
+
+  if (validSlots.length > 0) {
     await trpc().calendar.meetings.replace.mutate({
       courseId: created.id,
-      slots: [
-        {
-          weekday: draft.weekday,
-          startTime: draft.startTime,
-          endTime: draft.endTime,
-          label: draft.name.trim(),
-        },
-      ],
+      slots: validSlots.map((s) => ({
+        weekday: s.weekday,
+        startTime: s.startTime.trim(),
+        endTime: s.endTime.trim(),
+        room: s.room?.trim(),
+        label: draft.name.trim(),
+      })),
     })
   }
 
-  if (draft.teacherPrompt.trim()) {
+  if (draft.teacherPrompt.trim() || draft.teacherAppearance) {
     await trpc().characters.create.mutate({
       kind: 'mentor',
       courseId: created.id,
       method: 'describe',
       prompt: draft.teacherPrompt.trim(),
-      skeletonHint: 'creature',
+      skeletonHint: 'humanoid',
+      appearance: draft.teacherAppearance,
     })
   }
 

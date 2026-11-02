@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Alert, ScrollView, StyleSheet, Text } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { CourseDraftForm } from '../components/CourseDraftForm.tsx'
 import { BrandMark } from '../components/BrandMark.tsx'
@@ -23,7 +23,7 @@ export function OnboardingScreen({ onDone }: { onDone: () => void }) {
   const [courses, setCourses] = useState<CourseDraft[]>(defaultOnboardingCourses)
   const [busy, setBusy] = useState(false)
 
-  const readyCourses = courses.filter((c) => c.name.trim() && c.teacherPrompt.trim())
+  const readyCourses = courses.filter((c) => c.name.trim() && (c.teacherPrompt.trim() || c.teacherAppearance))
 
   function updateCourse(key: string, next: CourseDraft) {
     setCourses((prev) => prev.map((item) => (item.key === key ? next : item)))
@@ -55,7 +55,7 @@ export function OnboardingScreen({ onDone }: { onDone: () => void }) {
       }
       onDone()
     } catch (error) {
-      Alert.alert('Kurulum', error instanceof Error ? error.message : 'AI veya sunucu kapalı olabilir')
+      Alert.alert('Kurulum', error instanceof Error ? error.message : 'Kurulum kaydedilemedi')
     } finally {
       setBusy(false)
     }
@@ -68,7 +68,7 @@ export function OnboardingScreen({ onDone }: { onDone: () => void }) {
         <Title>Tanışma</Title>
         {step === 0 ? (
           <>
-            <Body>Anket değil, kısa bir kimlik. Gemini yoksa bu form yedektir.</Body>
+            <Body>Kısa bir kimlik seçimiyle öğrenme evrenini kuralım.</Body>
             <Field placeholder="Adın" value={displayName} onChangeText={setDisplayName} />
             {roles.map((item) => (
               <Button key={item} label={item} ghost={role !== item} onPress={() => setRole(item)} />
@@ -78,7 +78,7 @@ export function OnboardingScreen({ onDone }: { onDone: () => void }) {
         ) : null}
         {step === 1 ? (
           <>
-            <Body>Dönemi yaz. Dersleri bir sonraki adımda tek tek ekleyeceksin.</Body>
+            <Body>Dönemi yaz. Dersleri ve hocalarını bir sonraki adımda tasarlayacaksın.</Body>
             {role === 'student' ? (
               <>
                 <Field placeholder="Okul" value={schoolName} onChangeText={setSchoolName} />
@@ -88,13 +88,13 @@ export function OnboardingScreen({ onDone }: { onDone: () => void }) {
             <Field placeholder="Dönem adı" value={termName} onChangeText={setTermName} />
             <Field placeholder="Başlangıç YYYY-MM-DD" value={startDate} onChangeText={setStartDate} />
             <Field placeholder="Bitiş YYYY-MM-DD" value={endDate} onChangeText={setEndDate} />
-            <Button label="Derslere geç" onPress={() => setStep(2)} />
+            <Button label="Derslere ve Hocalara Geç" onPress={() => setStep(2)} />
           </>
         ) : null}
         {step === 2 ? (
           <>
             <Body>
-              Bir döneme istediğin kadar ders. Her dersin kendi hocası var; tarifler karışmaz.
+              Her dersin hocasını doğal dille tarif et; AI ile sohbet ederek karakterini adım adım şekillendirebilirsin.
             </Body>
             {courses.map((course, index) => (
               <Card key={course.key}>
@@ -112,7 +112,7 @@ export function OnboardingScreen({ onDone }: { onDone: () => void }) {
             <Button ghost label="Başka ders ekle" onPress={() => setCourses((prev) => [...prev, newCourseDraft()])} />
             <Button
               disabled={busy || readyCourses.length === 0}
-              label={busy ? 'Öğretmenler üretiliyor…' : `${readyCourses.length} ders ve hoca ile başla`}
+              label={busy ? 'Öğretmenler hazırlanıyor…' : `${readyCourses.length} ders ve hoca ile başla`}
               onPress={finish}
             />
             <Button ghost label="Döneme dön" onPress={() => setStep(1)} />

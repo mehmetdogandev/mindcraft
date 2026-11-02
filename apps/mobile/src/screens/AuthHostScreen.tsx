@@ -7,7 +7,7 @@ import { BrandMark } from '../components/BrandMark.tsx'
 import { Body, Button, Field } from '../components/ui.tsx'
 
 export function AuthHostScreen({ onReady }: { onReady: () => void }) {
-  const [mode, setMode] = useState<'in' | 'up'>('in')
+  const [mode, setMode] = useState<'in' | 'up'>('up')
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -29,7 +29,7 @@ export function AuthHostScreen({ onReady }: { onReady: () => void }) {
   return (
     <SafeAreaView style={styles.box}>
       <BrandMark />
-      <Body>Hesabın sunucuda durur. Gemini anahtarı telefona inmez.</Body>
+      <Body>Tüm hesap, ders, öğretmen ve ilerleme verilerin doğrudan cihazında (yerel veritabanında) tutulur.</Body>
       {mode === 'up' ? <Field placeholder="Adın" value={name} onChangeText={setName} /> : null}
       <Field
         placeholder="E-posta"
@@ -39,9 +39,10 @@ export function AuthHostScreen({ onReady }: { onReady: () => void }) {
         onChangeText={setEmail}
       />
       <Field placeholder="Şifre" secureTextEntry value={password} onChangeText={setPassword} />
-      <Button disabled={busy || !email || !password} label={mode === 'up' ? 'Kayıt ol' : 'Giriş yap'} onPress={submit} />
+      <Button disabled={busy || !email || !password} label={mode === 'up' ? 'Kayıt ol ve Başla' : 'Giriş yap'} onPress={submit} />
       <View>
         <Button
+          ghost
           label={mode === 'up' ? 'Zaten hesabım var' : 'Yeni hesap oluştur'}
           onPress={() => setMode(mode === 'up' ? 'in' : 'up')}
         />

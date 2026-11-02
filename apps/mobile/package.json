@@ -4,13 +4,15 @@
   "private": true,
   "main": "index.ts",
   "scripts": {
-    "start": "expo start",
-    "ios": "expo run:ios",
-    "ios:prebuild": "expo prebuild --platform ios --no-install",
+    "emulator": "node ./scripts/android.mjs emulator",
+    "android:emulator": "node ./scripts/android.mjs build",
+    "start": "node ./scripts/android.mjs start",
+    "start:metro": "react-native start",
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
     "ios:pods": "pod install --project-directory=ios",
     "ios:open": "open ios/Mindcraft.xcworkspace",
-    "typecheck": "tsc --noEmit",
-    "android": "expo run:android"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@mindcraft/game-rules": "workspace:*",
@@ -19,18 +21,18 @@
     "@react-native-async-storage/async-storage": "^2.2.0",
     "@react-navigation/native": "^7.1.17",
     "@react-navigation/native-stack": "^7.3.26",
-    "@trpc/client": "^11.5.1",
-    "expo": "~54.0.0",
-    "expo-constants": "~18.0.9",
-    "expo-status-bar": "~3.0.8",
     "react": "19.1.0",
     "react-native": "0.81.4",
     "react-native-safe-area-context": "~5.6.0",
     "react-native-screens": "~4.16.0",
-    "react-native-svg": "15.12.1",
-    "superjson": "^2.2.2"
+    "react-native-svg": "15.12.1"
   },
   "devDependencies": {
+    "@react-native-community/cli": "^20.0.0",
+    "@react-native-community/cli-platform-android": "^20.0.0",
+    "@react-native-community/cli-platform-ios": "^20.0.0",
+    "@react-native/babel-preset": "0.81.4",
+    "@react-native/metro-config": "0.81.4",
     "@types/react": "~19.1.0",
     "typescript": "^5.9.3"
   }

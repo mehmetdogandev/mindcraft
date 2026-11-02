@@ -6,4 +6,6 @@ export type RootStackParamList = {
   Mentor: { characterId: string; courseId?: string }
   Quest: { courseId?: string; topic?: string }
   Skills: undefined
+  Schedule: undefined
+  Profile: undefined
 }

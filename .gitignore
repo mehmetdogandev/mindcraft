@@ -32,8 +32,10 @@ ios/Pods/
 **/ios/Pods/
 **/ios/build/
 **/ios/DerivedData/
-android/.gradle/
-android/app/build/
+**/android/.gradle/
+**/android/build/
+**/android/app/build/
+**/android/local.properties
 *.orig.*
 web-build/
 

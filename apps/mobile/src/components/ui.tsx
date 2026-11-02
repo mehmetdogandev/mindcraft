@@ -2,11 +2,11 @@ import type { ReactNode } from 'react'
 import { Pressable, StyleSheet, Text, TextInput, View, type TextInputProps } from 'react-native'
 import { colors } from '../lib/theme.ts'
 
-export function Title({ children }: { children: string }) {
+export function Title({ children }: { children: ReactNode }) {
   return <Text style={styles.title}>{children}</Text>
 }
 
-export function Body({ children }: { children: string }) {
+export function Body({ children }: { children: ReactNode }) {
   return <Text style={styles.body}>{children}</Text>
 }
 

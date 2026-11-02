@@ -1,0 +1,49 @@
+{
+  "canvas": {
+    "width": 240,
+    "height": 240
+  },
+  "renderScale": 2,
+  "order": [
+    "legs",
+    "shoes",
+    "outfit",
+    "neck",
+    "face",
+    "hair",
+    "glasses"
+  ],
+  "default": {
+    "legs": "legs",
+    "shoes": "shoes",
+    "outfit": "outfit_suit",
+    "neck": "neck",
+    "face": "face_round",
+    "hair": "hair_blonde",
+    "glasses": "glasses_round"
+  },
+  "variants": {
+    "outfit": [
+      "outfit_suit",
+      "outfit_coat",
+      "outfit_casual"
+    ],
+    "face": [
+      "face_round",
+      "face_oval",
+      "face_square"
+    ],
+    "hair": [
+      "hair_blonde",
+      "hair_black",
+      "hair_brown",
+      "hair_gray"
+    ],
+    "glasses": [
+      "glasses_round",
+      "glasses_square",
+      null
+    ]
+  },
+  "note": "All assets are full-canvas 480x480 PNG; stack with absolute positioning at identical size. Front-facing idle pose only."
+}

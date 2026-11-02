@@ -1,9 +1,8 @@
-import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native'
+import { loadDb } from '../backend/db.ts'
 import { fetchHealth, type Health } from '../lib/api/health.ts'
 import { colors } from '../lib/theme.ts'
-import { BrandMark } from './BrandMark.tsx'
-import { Button } from './ui.tsx'
 
 export function ServerRequiredGate({
   children,
@@ -12,46 +11,28 @@ export function ServerRequiredGate({
   children: ReactNode
   onHealth?: (health: Health) => void
 }) {
-  const [health, setHealth] = useState<Health | null | undefined>(undefined)
-  const abort = useRef<AbortController | null>(null)
-
-  const check = useCallback(async () => {
-    abort.current?.abort()
-    const ctrl = new AbortController()
-    abort.current = ctrl
-    const next = await fetchHealth(ctrl.signal)
-    if (ctrl.signal.aborted) return
-    setHealth(next)
-    if (next) onHealth?.(next)
-  }, [onHealth])
+  const [ready, setReady] = useState(false)
 
   useEffect(() => {
-    check()
-    const id = setInterval(check, 5000)
-    return () => {
-      clearInterval(id)
-      abort.current?.abort()
+    let active = true
+    async function boot() {
+      await loadDb()
+      const health = await fetchHealth()
+      if (!active) return
+      if (health) onHealth?.(health)
+      setReady(true)
     }
-  }, [check])
+    boot()
+    return () => {
+      active = false
+    }
+  }, [onHealth])
 
-  if (health === undefined) {
+  if (!ready) {
     return (
       <View style={styles.box}>
         <ActivityIndicator color={colors.accent} />
-        <Text style={styles.muted}>Sunucuya bağlanılıyor…</Text>
-      </View>
-    )
-  }
-
-  if (!health) {
-    return (
-      <View style={styles.box}>
-        <BrandMark />
-        <Text style={styles.muted}>
-          Bağlantıda bir sorun var. Uygulama yalnızca sunucu ayaktayken çalışır. Sahte bir evren
-          açılmadı.
-        </Text>
-        <Button label="Tekrar dene" onPress={check} />
+        <Text style={styles.muted}>Yerel oyun veritabanı hazırlanıyor…</Text>
       </View>
     )
   }

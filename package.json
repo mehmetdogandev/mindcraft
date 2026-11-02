@@ -7,17 +7,14 @@
     "node": ">=22.11.0"
   },
   "scripts": {
-    "dev": "pnpm run stack:up && pnpm db:push && pnpm dev:server",
-    "dev:server": "pnpm --filter @mindcraft/server dev",
-    "dev:mobile": "pnpm --filter @mindcraft/mobile start",
-    "stack:up": "docker compose -f docker-compose.dev.yml up -d",
-    "stack:down": "docker compose -f docker-compose.dev.yml down",
-    "db:push": "pnpm --filter @mindcraft/server db:push",
-    "test": "pnpm --filter @mindcraft/game-rules test && pnpm --filter @mindcraft/schedule test",
+    "emulator": "node ./apps/mobile/scripts/android.mjs emulator",
+    "android:emulator": "node ./apps/mobile/scripts/android.mjs build",
+    "start": "node ./apps/mobile/scripts/android.mjs start",
+    "dev": "node ./apps/mobile/scripts/android.mjs start",
+    "test": "pnpm --filter @mindcraft/game-rules test && pnpm --filter @mindcraft/schedule test && pnpm --filter @mindcraft/sprites test",
     "typecheck": "pnpm -r --if-present typecheck"
   },
   "devDependencies": {
-    "concurrently": "^9.2.0",
     "typescript": "^5.9.3"
   }
 }

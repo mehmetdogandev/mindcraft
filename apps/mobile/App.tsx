@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { StatusBar } from 'expo-status-bar'
+import { StatusBar } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { ServerRequiredGate } from './src/components/ServerRequiredGate.tsx'
 import { RootNavigator } from './src/navigation/RootNavigator.tsx'
@@ -34,7 +34,7 @@ export function App() {
 
   return (
     <SafeAreaProvider>
-      <StatusBar style="light" />
+      <StatusBar barStyle="light-content" backgroundColor="#0D0421" />
       <ServerRequiredGate
         onHealth={(health: Health) => setGeminiOn(Boolean(health.gemini?.configured && health.gemini?.ok))}
       >
@@ -45,6 +45,10 @@ export function App() {
           onSignedIn={() => {
             setSignedIn(true)
             refreshProfile()
+          }}
+          onSignedOut={() => {
+            setSignedIn(false)
+            setOnboarded(false)
           }}
           onOnboarded={() => setOnboarded(true)}
         />
